@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:veggiez/screens/character.dart';
 import 'package:veggiez/screens/splash_screen.dart';
 import 'package:veggiez/screens/homepage.dart';
 import 'package:veggiez/theme/colors.dart';
@@ -24,7 +25,7 @@ class VeggizApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashScreen(),
         '/home': (context) => const HomePage(),
-        '/quiz': (context) => const Placeholder(),
+        '/chara': (context) => const ChooseCharacterPage (),
       },
     );
   }

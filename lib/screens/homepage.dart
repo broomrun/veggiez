@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:veggiez/theme/colors.dart';
 import 'package:veggiez/widgets/background.dart';
+import 'package:veggiez/widgets/button.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -64,40 +65,12 @@ class HomePage extends StatelessWidget {
             ),
           ),
 
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 80),
-              child: SizedBox(
-                width: size.width * 0.7,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.white,
-                    elevation: 0,
-                    shadowColor: Colors.transparent,
-                    overlayColor: AppColors.stroke1.withValues(alpha: 0.1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(
-                        color: AppColors.stroke1,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/quiz');
-                  },
-                  child: Text(
-                    "Start Game",
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.black,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          CustomButton(
+            text: "Start Game",
+            isPrimary: false,
+            onPressed: () {
+              Navigator.pushNamed(context, '/chara');
+            },
           ),
         ],
       ),

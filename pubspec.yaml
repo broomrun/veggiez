@@ -56,6 +56,10 @@ flutter:
 
   assets:
     - assets/images/cabbage.png
+    - assets/images/carrot.png
+    - assets/images/eggplant.png
+    - assets/images/red_pepper.png
+    - assets/images/yellow_pepper.png
 
   fonts:
     - family: Harlow

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:veggiez/theme/colors.dart';
-import 'package:veggiez/screens/homepage.dart'; // pastikan import ini ada
+import 'package:veggiez/screens/homepage.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

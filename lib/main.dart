@@ -4,6 +4,7 @@ import 'package:veggiez/screens/splash_screen.dart';
 import 'package:veggiez/screens/homepage.dart';
 import 'package:veggiez/screens/enter_name.dart';
 import 'package:veggiez/theme/colors.dart';
+import 'package:veggiez/screens/quiz.dart';
 
 void main() {
   runApp(const VeggizApp());
@@ -28,6 +29,7 @@ class VeggizApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/chara': (context) => const ChooseCharacterPage(),
         '/enterName': (context) => const EnterNamePage(),
+        '/quiz': (context) => const QuizPage(),
       },
     );
   }

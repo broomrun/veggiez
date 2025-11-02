@@ -35,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   google_fonts: ^6.3.2
+  provider: ^6.1.5+1
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +61,13 @@ flutter:
     - assets/images/eggplant.png
     - assets/images/red_pepper.png
     - assets/images/yellow_pepper.png
+    - assets/images/spinach.png
+    - assets/images/carrot2.png
+    - assets/images/garlic.png
+    - assets/images/brocolli.png
+    - assets/images/tomato.png
+
+
 
   fonts:
     - family: Harlow

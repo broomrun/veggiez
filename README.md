@@ -19,9 +19,11 @@
 Assets foto diambil dari creator Shubuh Studio di Canva.
 
 # Screenshoot aplikasi
-![Tampilan 1](assets/proof/1.png)
-![Tampilan 2](assets/proof/2.png)
-![Tampilan 3](assets/proof/3.png)
-![Tampilan 4](assets/proof/4.png)
-![Tampilan 5](assets/proof/5.png)
-![Tampilan 6](assets/proof/6.png)
+| ![1](assets/proof/1.png) | ![2](assets/proof/2.png) | ![3](assets/proof/3.png) |
+|:------------------------:|:------------------------:|:------------------------:|
+| ![4](assets/proof/4.png) | ![5](assets/proof/5.png) | ![6](assets/proof/6.png) |
+
+
+# Prototype
+Akses prototype veggiez disini:
+https://www.figma.com/proto/02i1pWQBFaLBkujTD5hIL8/uts-pemrograman-mobile?node-id=1-2&t=vEUsEirzDPq091Oj-1

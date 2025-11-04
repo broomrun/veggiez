@@ -1,7 +1,10 @@
+# Identitas
+
 **Nama:** Chairun Nisaq  
 **NIM:** 231401042  
-**LAB:** 5  
-**Nama Aplikasi:** Veggiez  
+**LAB:** 5
+
+## **Nama Aplikasi:** Veggiez
 
 **Veggiez** is a cheerful quiz app that helps users explore the world of vegetables through fun questions and charming visuals.
 
@@ -10,23 +13,15 @@
 2. Enter your name to personalize your quiz experience.
 3. Answer multiple-choice questions with both text and images.
 4. View your final score.
+   This project is a starting point for a Flutter application.
 
+# Assets
+Assets foto diambil dari creator Shubuh Studio di Canva.
 
-
-
-# veggiez
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Screenshoot aplikasi
+![Tampilan 1](assets/proof/1.png)
+![Tampilan 2](assets/proof/2.png)
+![Tampilan 3](assets/proof/3.png)
+![Tampilan 4](assets/proof/4.png)
+![Tampilan 5](assets/proof/5.png)
+![Tampilan 6](assets/proof/6.png)

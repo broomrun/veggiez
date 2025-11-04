@@ -50,7 +50,6 @@ class ResultPage extends StatelessWidget {
                     ),
                     SizedBox(height: spacing),
 
-                    // Stats Box
                     Container(
                       padding: EdgeInsets.all(padding * 0.6),
                       decoration: BoxDecoration(

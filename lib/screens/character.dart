@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:veggiez/theme/colors.dart';
 import 'package:veggiez/widgets/background.dart';
 import 'package:veggiez/widgets/button.dart';
+import 'package:veggiez/config/routes.dart';
 
 class ChooseCharacterPage extends StatefulWidget {
   const ChooseCharacterPage({super.key});
@@ -22,102 +24,126 @@ class _ChooseCharacterPageState extends State<ChooseCharacterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isButtonEnabled = selectedVeggie != null;
     final size = MediaQuery.of(context).size;
-    final double cardWidth = size.width * 0.7;
+    final bool isButtonEnabled = selectedVeggie != null;
+
+    final double titleFont = size.shortestSide * 0.12;
+    final double cardRadius = size.width * 0.06;
+    final double horizontalPadding = size.width * 0.08;
+    final double topSpacing = size.height * 0.03;
+    final double gridSpacing = size.height * 0.025;
 
     return Scaffold(
       backgroundColor: AppColors.white,
       body: Stack(
         children: [
           const HomeBackground2(),
+
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: topSpacing,
+              ),
               child: Column(
                 children: [
-                  const SizedBox(height: 50),
-
-                  Stack(
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'Choose Your\nVeggie',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Harlow',
-                          fontSize: 55,
-                          height: 1.1,
-                          foreground: Paint()
-                            ..style = PaintingStyle.stroke
-                            ..strokeWidth = 2
-                            ..color = AppColors.stroke1,
-                        ),
+                      Stack(
+                        children: [
+                          Text(
+                            'Choose Your\nVeggie',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Harlow',
+                              fontSize: titleFont,
+                              height: 0.85,
+                              foreground: Paint()
+                                ..style = PaintingStyle.stroke
+                                ..strokeWidth = 2
+                                ..color = AppColors.stroke1,
+                            ),
+                          ),
+                          Text(
+                            'Choose Your\nVeggie',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Harlow',
+                              fontSize: titleFont,
+                              height: 0.85,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
-                      const Text(
-                        'Choose Your\nVeggie',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Harlow',
-                          fontSize: 55,
-                          height: 1.1,
-                          color: Colors.white,
-                        ),
-                      ),
+                      SizedBox(height: size.height * 0.03),
                     ],
                   ),
 
-                const SizedBox(height: 60),
+                  Expanded(
+                    child: Center(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final double gridWidth =
+                              constraints.maxWidth * 0.85;
 
-                  Center(
-                    child: SizedBox(
-                      width: cardWidth,
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: veggies.length,
-                        gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 25,
-                          crossAxisSpacing: 25,
-                          childAspectRatio: 1,
-                        ),
-                        itemBuilder: (context, index) {
-                          final veggie = veggies[index];
-                          final isSelected = selectedVeggie == index;
+                          return SizedBox(
+                            width: gridWidth,
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: veggies.length,
+                              gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: gridSpacing,
+                                crossAxisSpacing: gridSpacing,
+                                childAspectRatio: 1,
+                              ),
+                              itemBuilder: (context, index) {
+                                final veggie = veggies[index];
+                                final isSelected = selectedVeggie == index;
 
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedVeggie = index;
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? AppColors.primary
-                                    : AppColors.white,
-                                borderRadius: BorderRadius.circular(25),
-                                border: Border.all(
-                                  color: AppColors.stroke1,
-                                  width: 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.black.withOpacity(0.1),
-                                    blurRadius: 4,
-                                    offset: const Offset(2, 2),
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedVeggie = index;
+                                    });
+                                  },
+                                  child: AnimatedContainer(
+                                    duration:
+                                    const Duration(milliseconds: 200),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? AppColors.primary
+                                          : AppColors.white,
+                                      borderRadius:
+                                      BorderRadius.circular(cardRadius),
+                                      border: Border.all(
+                                        color: AppColors.stroke1,
+                                        width: 2,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColors.black
+                                              .withValues(alpha: 0.1),
+                                          blurRadius: 4,
+                                          offset: const Offset(2, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding:
+                                      EdgeInsets.all(size.width * 0.05),
+                                      child: Image.asset(
+                                        veggie['image']!,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
                                   ),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Image.asset(
-                                  veggie['image']!,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
+                                );
+                              },
                             ),
                           );
                         },
@@ -125,25 +151,26 @@ class _ChooseCharacterPageState extends State<ChooseCharacterPage> {
                     ),
                   ),
 
-                  const Spacer(),
-
-                  AbsorbPointer(
-                    absorbing: !isButtonEnabled,
-                    child: Opacity(
-                      opacity: isButtonEnabled ? 1.0 : 0.5,
-                      child: CustomButton(
-                        text: "Next",
-                        isPrimary: true,
-                        onPressed: () {
-                          if (isButtonEnabled) {
-                            final selectedVeggieData = veggies[selectedVeggie!];
-                            Navigator.pushNamed(
-                              context,
-                              '/enterName',
-                              arguments: selectedVeggieData,
-                            );
-                          }
-                        },
+                  Padding(
+                    padding: EdgeInsets.only(top: size.height * 0.015),
+                    child: AbsorbPointer(
+                      absorbing: !isButtonEnabled,
+                      child: Opacity(
+                        opacity: isButtonEnabled ? 1.0 : 0.5,
+                        child: CustomButton(
+                          text: "Next",
+                          isPrimary: true,
+                          onPressed: () {
+                            if (isButtonEnabled) {
+                              final selectedVeggieData =
+                              veggies[selectedVeggie!];
+                              context.push(
+                                AppRoutes.enterName,
+                                extra: selectedVeggieData,
+                              );
+                            }
+                          },
+                        ),
                       ),
                     ),
                   ),

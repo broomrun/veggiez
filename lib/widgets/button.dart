@@ -6,7 +6,7 @@ class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final double widthFactor;
-  final double height;
+  final double heightFactor;
   final bool isPrimary;
   final TextStyle? textStyle;
 
@@ -15,7 +15,7 @@ class CustomButton extends StatelessWidget {
     required this.text,
     required this.onPressed,
     this.widthFactor = 0.7,
-    this.height = 50,
+    this.heightFactor = 0.07,
     this.isPrimary = true,
     this.textStyle,
   });
@@ -30,10 +30,10 @@ class CustomButton extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 80),
+        padding: EdgeInsets.only(bottom: size.height * 0.1),
         child: SizedBox(
           width: size.width * widthFactor,
-          height: height,
+          height: size.height * heightFactor,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: backgroundColor,
@@ -41,7 +41,7 @@ class CustomButton extends StatelessWidget {
               shadowColor: Colors.transparent,
               overlayColor: AppColors.stroke1.withValues(alpha: 0.1),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(size.width * 0.03),
                 side: const BorderSide(
                   color: AppColors.stroke1,
                   width: 2,
@@ -49,13 +49,18 @@ class CustomButton extends StatelessWidget {
               ),
             ),
             onPressed: onPressed,
-            child: Text(
-              text,
-              style: textStyle ??
-                  GoogleFonts.poppins(
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                text,
+                textAlign: TextAlign.center,
+                style: textStyle ??
+                    GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                      fontSize: size.width * 0.045,
+                    ),
+              ),
             ),
           ),
         ),

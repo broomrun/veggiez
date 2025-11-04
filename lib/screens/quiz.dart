@@ -1,83 +1,84 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:veggiez/theme/colors.dart';
 import 'package:veggiez/widgets/background.dart';
 import 'package:veggiez/data/dummy.dart';
+import 'package:go_router/go_router.dart';
+import 'package:veggiez/config/routes.dart';
+import 'package:veggiez/provider/quiz_provider.dart';
 
 class QuizPage extends StatefulWidget {
-  const QuizPage({super.key});
+  final String name;
+  final String imagePath;
+
+  const QuizPage({
+    super.key,
+    required this.name,
+    required this.imagePath,
+  });
 
   @override
   State<QuizPage> createState() => _QuizPageState();
 }
 
 class _QuizPageState extends State<QuizPage> {
-  int currentQuestionIndex = 0;
-  int? selectedOption;
-  bool answered = false;
-  late Timer timer;
-  int secondsLeft = 10;
-
   @override
   void initState() {
     super.initState();
-    startTimer();
-  }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final quizProvider = context.read<QuizProvider>();
+      quizProvider.resetQuiz();
 
-  void startTimer() {
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (secondsLeft > 0) {
-        setState(() => secondsLeft--);
-      } else {
-        showAnswerAndNext();
-      }
+      quizProvider.startTimer(() {
+        quizProvider.answered = true;
+        quizProvider.selectedOption = -1;
+
+        if (quizProvider.currentQuestionIndex < quizQuestions.length - 1) {
+          quizProvider.nextQuestion();
+        } else {
+          _goToResult();
+        }
+      });
     });
-  }
-
-  void showAnswerAndNext() {
-    if (!answered) {
-      setState(() {
-        answered = true;
-        selectedOption = -1;
-      });
-    }
-    Future.delayed(const Duration(seconds: 1), nextQuestion);
-  }
-
-  void nextQuestion() {
-    if (currentQuestionIndex < quizQuestions.length - 1) {
-      setState(() {
-        currentQuestionIndex++;
-        selectedOption = null;
-        answered = false;
-        secondsLeft = 10;
-      });
-    } else {
-      timer.cancel();
-    }
   }
 
   @override
   void dispose() {
-    timer.cancel();
+    context.read<QuizProvider>().stopTimer();
     super.dispose();
   }
 
-  void selectOption(int index) {
-    if (answered) return;
-    setState(() {
-      selectedOption = index;
-      answered = true;
+  void _goToResult() {
+    final quizProvider = context.read<QuizProvider>();
+    quizProvider.stopTimer();
+
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.pushReplacement(
+        AppRoutes.result,
+        extra: {
+          'score': quizProvider.score,
+          'name': widget.name,
+          'imagePath': widget.imagePath,
+        },
+      );
     });
-    Future.delayed(const Duration(seconds: 1), nextQuestion);
   }
 
   @override
   Widget build(BuildContext context) {
-    final question = quizQuestions[currentQuestionIndex];
-    double progress = (currentQuestionIndex + 1) / quizQuestions.length;
-    double boxWidth = MediaQuery.of(context).size.width * 0.8;
+    final quizProvider = context.watch<QuizProvider>();
+    final question = quizQuestions[quizProvider.currentQuestionIndex];
+
+    final size = MediaQuery.of(context).size;
+    final spacing = size.height * 0.025;
+    final horizontalPadding = size.width * 0.08;
+    final boxWidth = size.width * 0.85;
+    final progress =
+        (quizProvider.currentQuestionIndex + 1) / quizQuestions.length;
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -86,192 +87,202 @@ class _QuizPageState extends State<QuizPage> {
           const HomeBackground(),
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: spacing,
+              ),
               child: Column(
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
                     child: IconButton(
-                      icon: const Icon(Icons.arrow_back, size: 28),
+                      icon: const Icon(Icons.arrow_back),
                       color: AppColors.black,
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () {
+                        quizProvider.stopTimer();
+                        context.pop();
+                      },
                     ),
                   ),
+                  SizedBox(height: spacing),
 
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final double barWidth = constraints.maxWidth * 0.9;
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                  Column(
+                    children: [
+                      Container(
+                        width: boxWidth,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors.stroke1),
+                          borderRadius:
+                          BorderRadius.circular(size.width * 0.03),
+                        ),
+                        child: ClipRRect(
+                          borderRadius:
+                          BorderRadius.circular(size.width * 0.03),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            minHeight: size.height * 0.015,
+                            backgroundColor: AppColors.white,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: spacing / 2),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            width: barWidth,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: AppColors.stroke1, width: 2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: LinearProgressIndicator(
-                                value: progress,
-                                backgroundColor: AppColors.white,
-                                color: AppColors.primary,
-                                minHeight: 12,
-                              ),
+                          Text(
+                            "Question ${quizProvider.currentQuestionIndex + 1}/${quizQuestions.length}",
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.bold,
+                              fontSize: size.width * 0.04,
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          // question yang keberapa dan timer
-                          SizedBox(
-                            width: barWidth,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Question ${currentQuestionIndex + 1} of ${quizQuestions.length}",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 15,
-                                    color: AppColors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "00:${secondsLeft.toString().padLeft(2, '0')}",
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.bold,
-                                    color: secondsLeft <= 5
-                                        ? AppColors.red
-                                        : AppColors.black,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              ],
+                          Text(
+                            "00:${quizProvider.secondsLeft.toString().padLeft(2, '0')}",
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.bold,
+                              color: quizProvider.secondsLeft <= 5
+                                  ? AppColors.red
+                                  : AppColors.black,
+                              fontSize: size.width * 0.045,
                             ),
                           ),
                         ],
-                      );
-                    },
+                      ),
+                    ],
                   ),
 
-                  const Spacer(),
+                  SizedBox(height: spacing),
 
-                  Center(
+                  Expanded(
                     child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             width: boxWidth,
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(size.width * 0.05),
                             decoration: BoxDecoration(
                               color: AppColors.white,
-                              borderRadius: BorderRadius.circular(16),
-                              border:
-                              Border.all(color: AppColors.stroke1, width: 2),
+                              border: Border.all(color: AppColors.stroke1),
+                              borderRadius:
+                              BorderRadius.circular(size.width * 0.04),
                             ),
                             child: Column(
                               children: [
                                 if (question.image != null)
                                   Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
+                                    padding:
+                                    EdgeInsets.only(bottom: spacing / 2),
                                     child: Image.asset(
                                       question.image!,
-                                      height: 100,
+                                      height: size.height * 0.16,
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
                                 Text(
                                   question.question,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.poppins(
-                                    fontSize: 16,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColors.black,
+                                    fontSize: size.width * 0.048,
                                   ),
                                 ),
                               ],
                             ),
                           ),
+                          SizedBox(height: spacing),
 
-                          const SizedBox(height: 25),
+                          ...List.generate(question.options.length, (index) {
+                            final option = question.options[index];
+                            final isCorrect =
+                                index == question.correctIndex;
+                            final isSelected =
+                                index == quizProvider.selectedOption;
 
-                          // Opsi jawaban
-                          Column(
-                            children: List.generate(question.options.length,
-                                    (index) {
-                                  final option = question.options[index];
-                                  Color borderColor = AppColors.stroke1;
-                                  Color fillColor = AppColors.white;
+                            Color fillColor = AppColors.white;
+                            if (quizProvider.answered) {
+                              if (isCorrect) {
+                                fillColor = AppColors.stroke1;
+                              } else if (isSelected && !isCorrect) {
+                                fillColor = AppColors.red;
+                              }
+                            } else if (isSelected) {
+                              fillColor = AppColors.blacksoft;
+                            }
 
-                                  if (answered) {
-                                    if (index == question.correctIndex) {
-                                      fillColor = AppColors.stroke1;
-                                    } else if (index == selectedOption &&
-                                        index != question.correctIndex) {
-                                      fillColor = AppColors.red;
+                            return Padding(
+                              padding:
+                              EdgeInsets.only(bottom: spacing * 0.7),
+                              child: GestureDetector(
+                                onTap: () {
+                                  quizProvider.selectOption(index);
+
+                                  Future.delayed(
+                                      const Duration(seconds: 1), () {
+                                    if (!mounted) return;
+
+                                    if (quizProvider.currentQuestionIndex <
+                                        quizQuestions.length - 1) {
+                                      quizProvider.nextQuestion();
+                                    } else {
+                                      _goToResult();
                                     }
-                                  } else if (selectedOption == index) {
-                                    fillColor = AppColors.blacksoft;
-                                  }
-
-                                  return Padding(
-                                    padding: const EdgeInsets.only(bottom: 12),
-                                    child: GestureDetector(
-                                      onTap: () => selectOption(index),
-                                      child: Container(
-                                        width: boxWidth,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 14, horizontal: 10),
+                                  });
+                                },
+                                child: Container(
+                                  width: boxWidth,
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: size.height * 0.018,
+                                    horizontal: size.width * 0.04,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: fillColor,
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * 0.03),
+                                    border: Border.all(
+                                      color: AppColors.stroke1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: size.width * 0.08,
+                                        height: size.width * 0.08,
+                                        alignment: Alignment.center,
                                         decoration: BoxDecoration(
-                                          color: fillColor,
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius:
+                                          BorderRadius.circular(6),
                                           border: Border.all(
-                                              color: borderColor, width: 2),
+                                              color: AppColors.stroke1),
                                         ),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              width: 35,
-                                              height: 35,
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius.circular(6),
-                                                border: Border.all(
-                                                    color: AppColors.stroke1),
-                                              ),
-                                              child: Text(
-                                                String.fromCharCode(65 + index),
-                                                style: GoogleFonts.poppins(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 10),
-                                            Expanded(
-                                              child: Text(
-                                                option,
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 16),
-                                                softWrap: true,
-                                                overflow: TextOverflow.visible,
-                                              ),
-                                            ),
-                                          ],
+                                        child: Text(
+                                          String.fromCharCode(65 + index),
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: size.width * 0.04,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                }),
-                          ),
+                                      SizedBox(width: size.width * 0.03),
+                                      Expanded(
+                                        child: Text(
+                                          option,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: size.width * 0.042,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
                         ],
                       ),
                     ),
                   ),
-                  const Spacer(),
                 ],
               ),
             ),

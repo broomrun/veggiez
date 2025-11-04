@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:veggiez/theme/colors.dart';
-import 'package:veggiez/screens/homepage.dart';
+import 'package:veggiez/config/routes.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -34,38 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
         Future.delayed(const Duration(seconds: 1), () {
           if (!mounted) return;
-
-          Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-              transitionDuration: const Duration(milliseconds: 1200),
-              pageBuilder: (context, animation, secondaryAnimation) => const HomePage(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                final slideAnimation = Tween<Offset>(
-                  begin: const Offset(0, 0.3),
-                  end: Offset.zero,
-                ).animate(
-                  CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeInOutQuart,
-                  ),
-                );
-
-                final fadeAnimation = CurvedAnimation(
-                  parent: animation,
-                  curve: const Interval(0.2, 1.0, curve: Curves.easeInOut),
-                );
-
-                return FadeTransition(
-                  opacity: fadeAnimation,
-                  child: SlideTransition(
-                    position: slideAnimation,
-                    child: child,
-                  ),
-                );
-              },
-            ),
-          );
+          context.go(AppRoutes.home);
         });
       }
     });
@@ -92,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 fontSize: size.width * 0.20,
                 fontFamily: 'Harlow',
                 fontStyle: FontStyle.italic,
-                letterSpacing: 1.0,
+                letterSpacing: size.width * 0.003,
                 foreground: Paint()
                   ..style = PaintingStyle.stroke
                   ..strokeWidth = 3
@@ -105,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 fontSize: size.width * 0.20,
                 fontFamily: 'Harlow',
                 fontStyle: FontStyle.italic,
-                letterSpacing: 1.0,
+                letterSpacing: size.width * 0.003,
                 color: AppColors.white,
               ),
             ),

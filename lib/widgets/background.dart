@@ -8,32 +8,26 @@ class HomeBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Stack(
-      children: [
-        Container(color: AppColors.primary),
+    return SizedBox.expand(
+      child: Stack(
+        children: [
+          Container(color: AppColors.primary),
 
-        Positioned(
-          top: -size.height * 0.5,
-          left: -size.width * 0.7,
-          child: Container(
-            height: size.width * 2,
-            width: size.width * 2,
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.stroke1,
-                width: 2,
+          Align(
+            alignment: Alignment.topCenter,
+            child: CustomPaint(
+              size: Size(size.width, size.height * 0.65),
+              painter: VeggieCurvePainter(
+                fillColor: AppColors.white,
+                strokeColor: AppColors.stroke1,
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
-
-// background 2
 class HomeBackground2 extends StatelessWidget {
   const HomeBackground2({super.key});
 
@@ -41,27 +35,61 @@ class HomeBackground2 extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Stack(
-      children: [
-        Container(color: AppColors.white),
+    return SizedBox.expand(
+      child: Stack(
+        children: [
+          Container(color: AppColors.white),
 
-        Positioned(
-          top: -size.height * 0.5,
-          left: -size.width * 0.7,
-          child: Container(
-            height: size.width * 2,
-            width: size.width * 2,
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.stroke1,
-                width: 2,
+          Align(
+            alignment: Alignment.topCenter,
+            child: CustomPaint(
+              size: Size(size.width, size.height * 0.65),
+              painter: VeggieCurvePainter(
+                fillColor: AppColors.primary,
+                strokeColor: AppColors.stroke1,
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
+}
+
+class VeggieCurvePainter extends CustomPainter {
+  final Color fillColor;
+  final Color strokeColor;
+
+  VeggieCurvePainter({
+    required this.fillColor,
+    required this.strokeColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paintFill = Paint()
+      ..color = fillColor
+      ..style = PaintingStyle.fill;
+
+    final paintStroke = Paint()
+      ..color = strokeColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5;
+
+    final path = Path()
+      ..moveTo(0, size.height * 0.65)
+      ..quadraticBezierTo(
+        size.width * 0.5, size.height * 0.45,
+        size.width, size.height * 0.6,
+      )
+      ..lineTo(size.width, 0)
+      ..lineTo(0, 0)
+      ..close();
+
+    canvas.drawPath(path, paintFill);
+    canvas.drawPath(path, paintStroke);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

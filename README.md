@@ -1,3 +1,17 @@
+**Nama:** Chairun Nisaq
+**NIM:** 231401042
+**LAB:** 5
+**Nama Aplikasi:** Veggiez
+
+**Veggiez** is a cheerful quiz app that helps users explore the world of vegetables through fun questions and charming visuals.
+
+**Features**
+1. Pick your favorite veggie character before starting the quiz!
+2. Enter your name to personalize your quiz experience.
+3. Answer multiple-choice questions with both text and images.
+4. View your final score.
+
+
 # veggiez
 
 A new Flutter project.
